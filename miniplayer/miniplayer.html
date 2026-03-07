@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>YT Music Miniplayer</title>
+</head>
+<body>
+  <div class="card">
+    <div class="song_info">
+      <h2 id="title">...</h2>
+      <p id="artist">...</p>
+      <p id="timestamp">0:00 / 0:00</p>
+    </div>
+    <div class="buttons">
+      <button id="prev" >
+        <img src="images/previous-stroke-rounded.svg">
+      </button>
+      <button id="pause">
+        <img src="images/pause-stroke-rounded.svg">
+      </button>
+      <button id="next">
+        <img src="images/next-stroke-rounded.svg">
+      </button>
+    </div>
+  </div>
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const normalize = (value) => (value ?? '').replace(/\s+/g, ' ').trim(); // Fixes the issue of values spanning multiple lines due to redundant spacing
+
+    window.overlayAPI.onSongData((data) => {
+      document.querySelector('#title').innerText = normalize(data.title);
+      document.querySelector('#artist').innerText = normalize(data.artist);
+      document.querySelector('#timestamp').innerText = data.time_info;
+      document.documentElement.style.setProperty(
+          '--cover',
+          `url(${data.cover})`
+      );
+      var pause = document.getElementById('pause');
+      var img = pause.querySelector('img'); 
+      if((data.playPause)) img.src = "images/pause-stroke-rounded.svg";
+      else img.src = "images/play-stroke-rounded.svg";
+    });
+
+    const prev = document.getElementById('prev');
+    const pause = document.getElementById('pause');
+    const next = document.getElementById('next');
+
+    prev.onclick = () => window.overlayAPI.sendControl('prev');
+    pause.onclick = () => window.overlayAPI.sendControl('pause');
+    next.onclick = () => window.overlayAPI.sendControl('next');
+  });
+</script>
+</html>

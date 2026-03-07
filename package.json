@@ -1,0 +1,25 @@
+{
+  "name": "miniplayer",
+  "version": "1.0.0",
+  "description": "YouTube Music overlay mini player",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.miniplayer.app",
+    "productName": "Miniplayer",
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    }
+  },
+  "keywords": [],
+  "author": "Arnav Vivek",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^40.6.1",
+    "electron-builder": "^26.8.1"
+  }
+}

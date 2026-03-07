@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
+        webview {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <webview
+        id="ytmusic"
+        src="https://music.youtube.com"
+        partition="persist:ytmusic"
+        preload="./yt_preload.js">
+    </webview>
+
+</body>
+<script>
+    const webview = document.getElementById('ytmusic');
+
+    window.mainAPI.onControl((action) => {
+        webview.send('control', action);
+    });
+</script>
+</html>
