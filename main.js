@@ -30,32 +30,22 @@ function createWindow() {
         console.log('Load failed:', code, desc);
     });
 
-    win.on('minimize', () => {
-        createOverlayWindow();
-    });
+    win.on('minimize', createOverlayWindow);
 
     win.on('restore', () => {
         if (overlayWin && !overlayWin.isDestroyed()) {
             overlayWin.close();
         }
-        overlayWin = null;
     });
 
     win.on('closed', () => {
-        if (overlayWin) {
-            overlayWin.destroy();   // use destroy to force it
-            overlayWin = null;
-        }
-    });
-
-    win.on('blur', () => {
-        createOverlayWindow();
+        overlayWin = null;
     });
 }
 
 function createOverlayWindow() {
 
-    if (overlayWin) return;
+    if (overlayWin && !overlayWin.isDestroyed()) return;
 
     const screenDims = screen.getPrimaryDisplay();
     const { width, height } = screenDims.workAreaSize;
@@ -89,9 +79,9 @@ function createOverlayWindow() {
     overlayWin.loadFile('miniplayer/miniplayer.html');
 
     overlayWin.once('ready-to-show', () => {
-        if (overlayWin && !overlayWin.isDestroyed()) {
-            overlayWin.webContents.send('song-data', latestSongData);
-        }
+        if (!overlayWin || overlayWin.isDestroyed()) return;
+
+        overlayWin.webContents.send('song-data', latestSongData);
         overlayWin.show();
     });
 
