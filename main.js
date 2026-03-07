@@ -41,13 +41,6 @@ function createWindow() {
         overlayWin = null;
     });
 
-    win.on('focus', () => {
-        if (overlayWin && !overlayWin.isDestroyed()) {
-            overlayWin.close();
-        }
-        overlayWin = null;
-    });
-
     win.on('closed', () => {
         if (overlayWin) {
             overlayWin.destroy();   // use destroy to force it
@@ -87,10 +80,16 @@ function createOverlayWindow() {
         }
     });
 
+    overlayWin.setAlwaysOnTop(true, 'screen-saver');
+
+    overlayWin.on('blur', () => {
+        overlayWin.setAlwaysOnTop(true, 'screen-saver');
+    });
+
     overlayWin.loadFile('miniplayer/miniplayer.html');
 
     overlayWin.once('ready-to-show', () => {
-        if (latestSongData) {
+        if (overlayWin && !overlayWin.isDestroyed()) {
             overlayWin.webContents.send('song-data', latestSongData);
         }
         overlayWin.show();
@@ -111,7 +110,7 @@ app.whenReady().then(() => {
     ipcMain.on('forward-song-data', (event, data) => {
         latestSongData = data;
 
-        if(overlayWin){
+        if (overlayWin && !overlayWin.isDestroyed()) {
             overlayWin.webContents.send('song-data', data);
         }
     });
