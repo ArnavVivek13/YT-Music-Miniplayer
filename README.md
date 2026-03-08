@@ -1,123 +1,128 @@
-YT Music Miniplayer
+# YT Music Miniplayer
 
-A lightweight desktop overlay mini-player for YouTube Music built with Electron.
-The application embeds YouTube Music inside an Electron window and provides a floating always-on-top mini player that appears when the main window is minimized.
+A lightweight **desktop overlay mini-player for YouTube Music** built with **Electron**.
+The application embeds YouTube Music inside an Electron window and provides a **floating always-on-top mini player** that appears when the main window is minimized.
 
-The mini player allows you to control playback, view song metadata, and interact with the player without keeping the full window open.
+The mini player allows you to **control playback, view song metadata, and interact with the player without keeping the full window open**.
 
 ---
 
-Overview
+# Overview
 
-This project creates a custom desktop experience for YouTube Music by combining:
+This project creates a custom desktop experience for **YouTube Music** by combining:
 
-- Electron's multi-window architecture
-- Secure IPC communication
-- DOM extraction of player metadata
-- A floating overlay UI
+* Electron's multi-window architecture
+* Secure IPC communication
+* DOM extraction of player metadata
+* A floating overlay UI
 
 The application consists of two main windows:
 
-1. Main Window
-   
-   - Hosts the YouTube Music web app inside a "webview".
+1. **Main Window**
 
-2. Overlay Miniplayer
-   
-   - A small floating control panel that shows the current song and playback controls.
+   * Hosts the YouTube Music web app inside a `webview`.
+
+2. **Overlay Miniplayer**
+
+   * A small floating control panel that shows the current song and playback controls.
 
 When the main window is minimized, the overlay appears.
 Clicking the overlay restores the full player.
 
 ---
 
-Features
+# Features
 
-Floating Overlay Player
+### Floating Overlay Player
 
-- Always-on-top miniplayer
-- Appears automatically when the main window is minimized
-- Can be dragged across the screen
+* Always-on-top miniplayer
+* Appears automatically when the main window is minimized
+* Can be dragged across the screen
 
-Playback Controls
+### Playback Controls
 
 From the overlay you can control:
 
-- Play / Pause
-- Next Track
-- Previous Track
+* Play / Pause
+* Next Track
+* Previous Track
 
 These actions are forwarded to the YouTube Music web player via IPC.
 
 ---
 
-Live Song Metadata
+### Live Song Metadata
 
 The overlay displays:
 
-- Song title
-- Artist name
-- Current playback time
-- Album artwork
+* Song title
+* Artist name
+* Current playback time
+* Album artwork
 
-This information is extracted directly from the YouTube Music DOM.
+This information is extracted directly from the **YouTube Music DOM**.
 
 ---
 
-Dynamic Background
+### Dynamic Background
 
 The overlay background dynamically adapts to the current song:
 
-- Album cover is used as a blurred background
-- CSS effects produce a gradient glass-like card
+* Album cover is used as a blurred background
+* CSS effects produce a gradient glass-like card
 
 ---
 
-Lightweight
+### Lightweight
 
-- No heavy frameworks
-- Built with Vanilla JS + Electron
-- Small codebase and minimal dependencies
+* No heavy frameworks
+* Built with **Vanilla JS + Electron**
+* Small codebase and minimal dependencies
 
 ---
 
-UI Overview
+# UI Overview
 
-Main Player
+## Main Player
 
 The main window hosts YouTube Music.
 
 It is a full desktop wrapper around:
 
+```
 https://music.youtube.com
+```
 
-This is embedded using an Electron "webview".
+This is embedded using an Electron `webview`.
 
 ---
 
-Overlay Miniplayer
+## Overlay Miniplayer
 
 The overlay displays:
 
+```
 ┌─────────────────────────────┐
 │ Song Title                  │
 │ Artist           ◁  || ▷   │
 │ 0:31 / 3:45                 │
 └─────────────────────────────┘
+```
 
 Features:
 
-- Always on top
-- Frameless window
-- Blurred album cover background
-- Rounded card interface
+* Always on top
+* Frameless window
+* Blurred album cover background
+* Rounded card interface
 
 ---
 
-Architecture
+# Architecture
 
-The project uses a multi-layer IPC architecture:
+The project uses a **multi-layer IPC architecture**:
 
+```
 Overlay UI
    ↓
 overlay_preload.js
@@ -131,24 +136,26 @@ index.html
 YouTube Music webview
    ↓
 yt_preload.js
+```
 
-Each layer communicates through Electron IPC channels.
+Each layer communicates through **Electron IPC channels**.
 
 ---
 
-IPC Workflow
+# IPC Workflow
 
 The application uses several IPC channels to allow communication between windows.
 
 ---
 
-1. Song Data Flow
+## 1. Song Data Flow
 
 Purpose:
 Send current track information from YouTube Music to the overlay.
 
 Flow:
 
+```
 YouTube Music DOM
       ↓
 yt_preload.js
@@ -162,6 +169,7 @@ overlayWin.webContents.send("song-data")
 overlay_preload.js
       ↓
 miniplayer.html
+```
 
 Result:
 
@@ -169,13 +177,14 @@ The overlay updates the UI with the latest song metadata.
 
 ---
 
-2. Playback Controls
+## 2. Playback Controls
 
 Purpose:
 Allow the overlay to control the YouTube Music player.
 
 Flow:
 
+```
 miniplayer.html
       ↓
 overlay_preload.js
@@ -193,6 +202,7 @@ webview.send("control")
 yt_preload.js
       ↓
 DOM button click
+```
 
 Result:
 
@@ -200,8 +210,9 @@ The overlay buttons directly control the YouTube Music player.
 
 ---
 
-File Structure
+# File Structure
 
+```
 Miniplayer
 │
 ├── main.js
@@ -218,95 +229,102 @@ Miniplayer
 │
 ├── package.json
 └── README.md
+```
 
 ---
 
-File Explanations
+# File Explanations
 
-main.js
+## main.js
 
-The Electron main process.
+The **Electron main process**.
 
 Responsibilities:
 
-- Creates the main application window
-- Creates the overlay window
-- Handles IPC routing between windows
-- Manages window lifecycle events
+* Creates the main application window
+* Creates the overlay window
+* Handles IPC routing between windows
+* Manages window lifecycle events
 
 Key behaviors:
 
-- Show overlay when minimized
-- Close overlay when restored
-- Forward IPC messages
+* Show overlay when minimized
+* Close overlay when restored
+* Forward IPC messages
 
 ---
 
-main_preload.js
+## main_preload.js
 
 Secure bridge between:
 
+```
 Main Renderer ↔ Main Process
+```
 
 Exposes safe APIs like:
 
-- playback control listener
+* playback control listener
 
 ---
 
-index.html
+## index.html
 
 The renderer page for the main window.
 
-Contains the YouTube Music webview.
+Contains the **YouTube Music webview**.
 
 Responsibilities:
 
-- Load YouTube Music
-- Forward commands to the webview
-- Receive playback commands from the overlay
+* Load YouTube Music
+* Forward commands to the webview
+* Receive playback commands from the overlay
 
 ---
 
-yt_preload.js
+## yt_preload.js
 
 Injected into the YouTube Music webview.
 
 Responsibilities:
 
-- Extract player information from the DOM
-- Detect playback state
-- Trigger DOM events for playback controls
-- Send song data back to the app
+* Extract player information from the DOM
+* Detect playback state
+* Trigger DOM events for playback controls
+* Send song data back to the app
 
 Example extracted data:
 
+```
 title
 artist
 current time
 album artwork
 play/pause state
+```
 
 ---
 
-miniplayer/miniplayer.html
+## miniplayer/miniplayer.html
 
 The overlay UI.
 
 Displays:
 
-- Song metadata
-- Playback controls
+* Song metadata
+* Playback controls
 
 Also handles UI events like:
 
+```
 prev
 pause
 next
+```
 
 ---
 
-overlay_preload.js
+## overlay_preload.js
 
 Secure bridge for the overlay window.
 
@@ -314,81 +332,91 @@ Responsibilities:
 
 Expose safe functions:
 
+```
 sendControl()
 onSongData()
+```
 
 This prevents the renderer from directly accessing Node APIs.
 
 ---
 
-styles.css
+## styles.css
 
 Defines the miniplayer appearance.
 
 Features:
 
-- Dynamic blurred album cover background
-- Dark translucent UI
-- Responsive layout
+* Dynamic blurred album cover background
+* Dark translucent UI
+* Responsive layout
 
 ---
 
-Installation
+# Installation
 
 Clone the repository:
 
+```bash
 git clone https://github.com/ArnavVivek13/YT-Music-Miniplayer.git
 cd YT-Music-Miniplayer
+```
 
 Install dependencies:
 
+```bash
 npm install
+```
 
 Run the application:
 
+```bash
 npm start
+```
 
 ---
 
-Building the Executable
+# Building the Executable
 
 Create a Windows build:
 
+```bash
 npm run build:win
+```
 
-The executable will appear in the "dist" folder.
-
----
-
-Technologies Used
-
-- Electron
-- JavaScript
-- HTML / CSS
-- IPC (Inter-Process Communication)
+The executable will appear in the `dist` folder.
 
 ---
 
-Disclaimer
+# Technologies Used
 
-This project is an unofficial wrapper for YouTube Music.
+* Electron
+* JavaScript
+* HTML / CSS
+* IPC (Inter-Process Communication)
+
+---
+
+# Disclaimer
+
+This project is an **unofficial wrapper** for YouTube Music.
 
 It is intended for educational and personal use.
 
 ---
 
-Future Improvements
+# Future Improvements
 
 Possible enhancements:
 
-- Media key support
-- System tray controls
-- Volume integration
-- Keyboard shortcuts
-- Cross-platform builds
+* Media key support
+* System tray controls
+* Volume integration
+* Keyboard shortcuts
+* Cross-platform builds
 
 ---
 
-Author
+# Author
 
 Arnav Vivek
